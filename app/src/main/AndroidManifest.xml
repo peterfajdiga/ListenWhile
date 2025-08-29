@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlayWhile">
         <activity
+            android:name=".ListenActivity"
+            android:exported="false"
+            android:label="@string/title_activity_listen"
+            android:theme="@style/Theme.PlayWhile" />
+        <activity
             android:name=".PickerActivity"
             android:exported="true"
             android:label="@string/app_name"

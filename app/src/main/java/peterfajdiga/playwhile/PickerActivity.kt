@@ -50,7 +50,7 @@ fun AudioPickerScreen(modifier: Modifier = Modifier) {
             Text("Selected: ${selectedAudioUri}")
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {
-                val intent = Intent(context, AudioPlayerActivity::class.java).apply {
+                val intent = Intent(context, ListenActivity::class.java).apply {
                     data = selectedAudioUri
                 }
                 context.startActivity(intent)

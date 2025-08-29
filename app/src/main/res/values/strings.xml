@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PlayWhile</string>
+    <string name="title_activity_listen">ListenActivity</string>
 </resources>
