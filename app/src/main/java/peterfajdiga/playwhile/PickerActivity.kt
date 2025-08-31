@@ -36,10 +36,13 @@ class PickerActivity : ComponentActivity() {
 fun AudioPickerScreen(modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var selectedAudioUri by remember { mutableStateOf<Uri?>(null) }
+
     if (selectedAudioUri != null) {
         val intent = Intent(context, ListenActivity::class.java).apply {
             data = selectedAudioUri
         }
+        @Suppress("AssignedValueIsNeverRead")
+        selectedAudioUri = null // allow picking the same file again
         context.startActivity(intent)
     }
 
