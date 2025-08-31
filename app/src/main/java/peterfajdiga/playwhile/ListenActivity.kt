@@ -127,18 +127,16 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row {
-                if (isPlaying) {
-                    Button(onClick = {
+                Button(onClick = {
+                    if (isPlaying) {
                         player.pause()
-                    }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                        Text("Pause")
-                    }
-                } else {
-                    Button(onClick = {
+                        isPlaying = false
+                    } else {
                         player.play()
-                    }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                        Text("Play")
+                        isPlaying = true
                     }
+                }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
+                    Text(if (isPlaying) "Pause" else "Play")
                 }
             }
         }
