@@ -12,49 +12,53 @@ class Player(
     audioUri: Uri,
 ) {
     private val mediaPlayer = MediaPlayer.create(context, audioUri)
-    private val mediaSession = setupMediaSession(context)
+    private val mediaSession = MediaSession(context, "PlayWhilePlayerMediaSession")
 
     fun play() {
         mediaPlayer.start()
+        updatePlaybackState(PlaybackState.STATE_PLAYING)
     }
 
     fun pause() {
         mediaPlayer.pause()
+        updatePlaybackState(PlaybackState.STATE_PAUSED)
     }
 
     fun release() {
         mediaPlayer.release()
     }
-}
 
-private fun setupMediaSession(context: Context): MediaSession {
-    val mediaSession = MediaSession(context, "PlayWhilePlayerMediaSession").apply {
-        setCallback(object : MediaSession.Callback() {
+    init {
+        setupMediaSession()
+    }
+
+    private fun updatePlaybackState(state: Int) {
+        val playbackState = PlaybackState.Builder()
+            .setActions(
+                PlaybackState.ACTION_PLAY or
+                PlaybackState.ACTION_PAUSE or
+                PlaybackState.ACTION_SKIP_TO_PREVIOUS
+            )
+            .setState(state, mediaPlayer.currentPosition.toLong(), 1.0f)
+            .build()
+        mediaSession.setPlaybackState(playbackState)
+    }
+
+    private fun setupMediaSession() {
+        mediaSession.setCallback(object : MediaSession.Callback() {
             override fun onPlay() {
-                Log.d("MediaSession", "Play pressed")
+                play()
             }
 
             override fun onPause() {
-                Log.d("MediaSession", "Pause pressed")
+                pause()
             }
 
             override fun onSkipToPrevious() {
                 Log.d("MediaSession", "Skip to Previous pressed")
             }
         })
-        isActive = true
+        mediaSession.isActive
+        updatePlaybackState(PlaybackState.STATE_NONE)
     }
-
-    val playbackState = PlaybackState.Builder()
-        .setActions(
-            PlaybackState.ACTION_PLAY or
-            PlaybackState.ACTION_PAUSE or
-            PlaybackState.ACTION_SKIP_TO_PREVIOUS
-        )
-        .setState(PlaybackState.STATE_PAUSED, 0L, 1.0f)
-        .build()
-
-    mediaSession.setPlaybackState(playbackState)
-
-    return mediaSession
 }
