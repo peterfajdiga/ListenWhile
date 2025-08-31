@@ -31,6 +31,10 @@ class Player(
         )
     }
 
+    fun isPlaying(): Boolean {
+        return mediaPlayer.isPlaying
+    }
+
     fun getCurrentPosition(): Int {
         return mediaPlayer.currentPosition
     }

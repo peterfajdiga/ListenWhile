@@ -54,6 +54,7 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     val player = remember { Player(context, audioUri) }
     val duration = player.getDuration()
     var position by remember { mutableStateOf(0) }
+    var isPlaying by remember { mutableStateOf(false) }
     var seekbarPosition by remember { mutableStateOf(0f) }
     var isSeeking by remember { mutableStateOf(false) }
 
@@ -65,6 +66,7 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
 
     LaunchedEffect(Unit) {
         while (true) {
+            isPlaying = player.isPlaying()
             position = player.getCurrentPosition()
             if (!isSeeking) {
                 seekbarPosition = position.toFloat()
@@ -116,14 +118,8 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
         Row {
             Button(onClick = {
                 player.play()
-            }) {
-                Text("Play")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
-                player.pause()
-            }) {
-                Text("Pause")
+            }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
+                Text(if (isPlaying) "Pause" else "Play")
             }
         }
     }
