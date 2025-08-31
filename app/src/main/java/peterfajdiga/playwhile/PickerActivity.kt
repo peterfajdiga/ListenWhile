@@ -34,29 +34,24 @@ class PickerActivity : ComponentActivity() {
 
 @Composable
 fun AudioPickerScreen(modifier: Modifier = Modifier) {
+    val context = androidx.compose.ui.platform.LocalContext.current
     var selectedAudioUri by remember { mutableStateOf<Uri?>(null) }
+    if (selectedAudioUri != null) {
+        val intent = Intent(context, ListenActivity::class.java).apply {
+            data = selectedAudioUri
+        }
+        context.startActivity(intent)
+    }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri -> selectedAudioUri = uri }
     )
-    val context = androidx.compose.ui.platform.LocalContext.current
     Column(modifier = modifier) {
         Button(onClick = {
             launcher.launch(arrayOf("audio/*"))
         }) {
             Text("Pick Audio File")
-        }
-        if (selectedAudioUri != null) {
-            Text("Selected: ${selectedAudioUri}")
-            Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = {
-                val intent = Intent(context, ListenActivity::class.java).apply {
-                    data = selectedAudioUri
-                }
-                context.startActivity(intent)
-            }) {
-                Text("Play Audio")
-            }
         }
     }
 }
