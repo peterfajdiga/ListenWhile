@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
@@ -88,7 +89,16 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
         Text(text = "Audio URI: $audioUri")
         Spacer(modifier = Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
-            Text(text = formatPosition(position), modifier = Modifier.weight(1f), textAlign = TextAlign.Start)
+            Row(modifier = Modifier.weight(1f)) {
+                val opacityModifier = if (isSeeking) Modifier.alpha(0.25f) else Modifier
+                Text(text = formatPosition(position), modifier = opacityModifier)
+                if (isSeeking) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "->", opacityModifier)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = formatPosition(seekbarPosition.toInt()))
+                }
+            }
             Text(text = formatPosition(duration), modifier = Modifier.weight(1f), textAlign = TextAlign.End)
         }
         Slider(
