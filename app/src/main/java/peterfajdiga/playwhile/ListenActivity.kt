@@ -86,8 +86,6 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     }
 
     Column(modifier = modifier.padding(16.dp)) {
-        Text(text = "Audio URI: $audioUri")
-        Spacer(modifier = Modifier.height(16.dp))
         Row(modifier = Modifier.fillMaxWidth()) {
             Row(modifier = Modifier.weight(1f)) {
                 val opacityModifier = if (isSeeking) Modifier.alpha(0.25f) else Modifier
