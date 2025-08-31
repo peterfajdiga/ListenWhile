@@ -1,5 +1,6 @@
 package peterfajdiga.playwhile
 
+import android.app.Application
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -32,6 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.delay
 import peterfajdiga.playwhile.ui.theme.PlayWhileTheme
 import kotlin.time.Duration.Companion.milliseconds
@@ -55,7 +59,12 @@ class ListenActivity : ComponentActivity() {
 @Composable
 fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
-    val player = remember { Player(context, audioUri) }
+    val playerViewModel: PlayerViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer { PlayerViewModel(context.applicationContext as Application, audioUri) }
+        }
+    )
+    val player = playerViewModel.player
     val duration = player.getDuration()
     var position by remember { mutableIntStateOf(0) }
     var isPlaying by remember { mutableStateOf(false) }
