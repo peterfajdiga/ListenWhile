@@ -25,9 +25,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import peterfajdiga.playwhile.ui.theme.PlayWhileTheme
+import kotlin.time.Duration.Companion.milliseconds
 
 class ListenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,9 +72,25 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
         }
     }
 
+    fun formatPosition(ms: Int): String {
+        val dur = ms.milliseconds
+        val h = dur.inWholeHours
+        val m = dur.inWholeMinutes % 60
+        val s = dur.inWholeSeconds % 60
+        return if (h > 0) {
+            "%d:%02d:%02d".format(h, m, s)
+        } else {
+            "%d:%02d".format(m, s)
+        }
+    }
+
     Column(modifier = modifier.padding(16.dp)) {
         Text(text = "Audio URI: $audioUri")
         Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(text = formatPosition(position), modifier = Modifier.weight(1f), textAlign = TextAlign.Start)
+            Text(text = formatPosition(duration), modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+        }
         Slider(
             value = seekbarPosition.coerceIn(0f, duration.toFloat()),
             onValueChange = {
