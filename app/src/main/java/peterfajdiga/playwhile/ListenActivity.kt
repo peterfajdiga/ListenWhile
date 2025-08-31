@@ -1,6 +1,5 @@
 package peterfajdiga.playwhile
 
-import android.media.MediaPlayer
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.net.Uri
@@ -21,10 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import peterfajdiga.playwhile.ui.theme.PlayWhileTheme
@@ -33,35 +29,8 @@ class ListenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val mediaSession = MediaSession(this, "MyMediaSession").apply {
-            setCallback(object : MediaSession.Callback() {
-                override fun onPlay() {
-                    Log.d("MediaSession", "Play pressed")
-                }
-
-                override fun onPause() {
-                    Log.d("MediaSession", "Pause pressed")
-                }
-
-                override fun onSkipToPrevious() {
-                    Log.d("MediaSession", "Skip to Previous pressed")
-                }
-            })
-            isActive = true
-        }
-
-        val playbackState = PlaybackState.Builder()
-            .setActions(
-                PlaybackState.ACTION_PLAY or
-                PlaybackState.ACTION_PAUSE or
-                PlaybackState.ACTION_SKIP_TO_PREVIOUS
-            )
-            .setState(PlaybackState.STATE_PAUSED, 0L, 1.0f)
-            .build()
-        mediaSession.setPlaybackState(playbackState)
-
-        val audioUri: Uri? = intent?.data
+        val audioUri: Uri = intent?.data
+            ?: throw IllegalArgumentException("No audio URI provided in intent")
         setContent {
             PlayWhileTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -73,36 +42,29 @@ class ListenActivity : ComponentActivity() {
 }
 
 @Composable
-fun AudioPlayerScreen(audioUri: Uri?, modifier: Modifier = Modifier) {
-    var isPlaying by remember { mutableStateOf(false) }
-    var mediaPlayer: MediaPlayer? by remember { mutableStateOf(null) }
+fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
+    val player = remember { Player(context, audioUri) }
 
-    DisposableEffect(audioUri) {
-        if (audioUri != null) {
-            mediaPlayer = MediaPlayer.create(context, audioUri)
-        }
+    DisposableEffect(Unit) {
         onDispose {
-            mediaPlayer?.release()
-            mediaPlayer = null
+            player.release()
         }
     }
 
     Column(modifier = modifier.padding(16.dp)) {
-        Text(text = "Audio URI: ${audioUri ?: "None"}")
+        Text(text = "Audio URI: $audioUri")
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             Button(onClick = {
-                mediaPlayer?.start()
-                isPlaying = true
-            }, enabled = !isPlaying && mediaPlayer != null) {
+                player.play()
+            }) {
                 Text("Play")
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
-                mediaPlayer?.pause()
-                isPlaying = false
-            }, enabled = isPlaying && mediaPlayer != null) {
+                player.pause()
+            }) {
                 Text("Pause")
             }
         }
