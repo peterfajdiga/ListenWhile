@@ -20,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -70,12 +69,6 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     var isPlaying by remember { mutableStateOf(false) }
     var seekbarPosition by remember { mutableFloatStateOf(0f) }
     var isSeeking by remember { mutableStateOf(false) }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            player.release()
-        }
-    }
 
     LaunchedEffect(Unit) {
         while (true) {
