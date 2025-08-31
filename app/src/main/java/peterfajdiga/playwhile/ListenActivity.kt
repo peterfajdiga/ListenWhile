@@ -21,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,9 +55,9 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val player = remember { Player(context, audioUri) }
     val duration = player.getDuration()
-    var position by remember { mutableStateOf(0) }
+    var position by remember { mutableIntStateOf(0) }
     var isPlaying by remember { mutableStateOf(false) }
-    var seekbarPosition by remember { mutableStateOf(0f) }
+    var seekbarPosition by remember { mutableFloatStateOf(0f) }
     var isSeeking by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
