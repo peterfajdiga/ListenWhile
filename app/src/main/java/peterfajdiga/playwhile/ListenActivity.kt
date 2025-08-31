@@ -49,9 +49,9 @@ class ListenActivity : ComponentActivity() {
 fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val player = remember { Player(context, audioUri) }
-
-    var position by remember { mutableStateOf(0f) }
-    var duration by remember { mutableStateOf(1f) }
+    val duration = player.getDuration()
+    var position by remember { mutableStateOf(0) }
+    var seekbarPosition by remember { mutableStateOf(0f) }
     var isSeeking by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
@@ -62,9 +62,9 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
 
     LaunchedEffect(Unit) {
         while (true) {
+            position = player.getCurrentPosition()
             if (!isSeeking) {
-                position = player.getCurrentPosition().toFloat()
-                duration = player.getDuration().toFloat().coerceAtLeast(1f)
+                seekbarPosition = position.toFloat()
             }
             delay(500)
         }
@@ -74,16 +74,16 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
         Text(text = "Audio URI: $audioUri")
         Spacer(modifier = Modifier.height(16.dp))
         Slider(
-            value = position.coerceIn(0f, duration),
+            value = seekbarPosition.coerceIn(0f, duration.toFloat()),
             onValueChange = {
-                position = it
+                seekbarPosition = it
                 isSeeking = true
             },
             onValueChangeFinished = {
-                player.seekTo(position.toInt())
+                player.seekTo(seekbarPosition.toInt())
                 isSeeking = false
             },
-            valueRange = 0f..duration,
+            valueRange = 0f..duration.toFloat(),
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(16.dp))
