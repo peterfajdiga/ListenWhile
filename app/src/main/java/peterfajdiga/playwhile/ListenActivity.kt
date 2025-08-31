@@ -108,7 +108,6 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
                 }
                 Text(
                     text = formatPosition(duration),
-                    modifier = Modifier.weight(1f),
                     textAlign = TextAlign.End
                 )
             }
