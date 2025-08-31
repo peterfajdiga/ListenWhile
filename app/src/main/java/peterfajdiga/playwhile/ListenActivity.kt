@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
@@ -89,39 +91,45 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
         }
     }
 
-    Column(modifier = modifier.padding(16.dp)) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Row(modifier = Modifier.weight(1f)) {
-                val opacityModifier = if (isSeeking) Modifier.alpha(0.25f) else Modifier
-                Text(text = formatPosition(position), modifier = opacityModifier)
-                if (isSeeking) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "->", opacityModifier)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = formatPosition(seekbarPosition.toInt()))
+    Box(modifier = modifier.padding(16.dp).fillMaxSize()) {
+        Column(modifier = Modifier.align(Alignment.Center)) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.weight(1f)) {
+                    val opacityModifier = if (isSeeking) Modifier.alpha(0.25f) else Modifier
+                    Text(text = formatPosition(position), modifier = opacityModifier)
+                    if (isSeeking) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "->", opacityModifier)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = formatPosition(seekbarPosition.toInt()))
+                    }
                 }
+                Text(
+                    text = formatPosition(duration),
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.End
+                )
             }
-            Text(text = formatPosition(duration), modifier = Modifier.weight(1f), textAlign = TextAlign.End)
-        }
-        Slider(
-            value = seekbarPosition.coerceIn(0f, duration.toFloat()),
-            onValueChange = {
-                seekbarPosition = it
-                isSeeking = true
-            },
-            onValueChangeFinished = {
-                player.seekTo(seekbarPosition.toInt())
-                isSeeking = false
-            },
-            valueRange = 0f..duration.toFloat(),
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Row {
-            Button(onClick = {
-                player.play()
-            }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                Text(if (isPlaying) "Pause" else "Play")
+            Slider(
+                value = seekbarPosition.coerceIn(0f, duration.toFloat()),
+                onValueChange = {
+                    seekbarPosition = it
+                    isSeeking = true
+                },
+                onValueChangeFinished = {
+                    player.seekTo(seekbarPosition.toInt())
+                    isSeeking = false
+                },
+                valueRange = 0f..duration.toFloat(),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row {
+                Button(onClick = {
+                    player.play()
+                }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
+                    Text(if (isPlaying) "Pause" else "Play")
+                }
             }
         }
     }
