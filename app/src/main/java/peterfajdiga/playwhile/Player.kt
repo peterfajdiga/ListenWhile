@@ -5,7 +5,8 @@ import android.media.MediaPlayer
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.net.Uri
-import android.util.Log
+
+const val REWIND_AMOUNT_MS = 10000
 
 class Player(
     context: Context,
@@ -22,6 +23,12 @@ class Player(
     fun pause() {
         mediaPlayer.pause()
         updatePlaybackState(PlaybackState.STATE_PAUSED)
+    }
+
+    fun rewind() {
+        mediaPlayer.seekTo(
+            (mediaPlayer.currentPosition - REWIND_AMOUNT_MS).coerceAtLeast(0),
+        )
     }
 
     fun release() {
@@ -55,7 +62,7 @@ class Player(
             }
 
             override fun onSkipToPrevious() {
-                Log.d("MediaSession", "Skip to Previous pressed")
+                rewind()
             }
         })
         mediaSession.isActive
