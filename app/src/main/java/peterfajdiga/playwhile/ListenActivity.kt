@@ -121,7 +121,7 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
                 }
                 Text(
                     text = formatPosition(duration),
-                    textAlign = TextAlign.End
+                    textAlign = TextAlign.End,
                 )
             }
             Slider(
@@ -135,27 +135,33 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
                     isSeeking = false
                 },
                 valueRange = 0f..duration.toFloat(),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
-                Button(onClick = {
-                    player.rewind()
-                    updatePosition()
-                }, modifier = Modifier.height(48.dp).weight(1f)) {
+                Button(
+                    onClick = {
+                        player.rewind()
+                        updatePosition()
+                    },
+                    modifier = Modifier.height(48.dp).weight(1f),
+                ) {
                     Text("-%ds".format(REWIND_S))
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(onClick = {
-                    player.advance()
-                    updatePosition()
-                }, modifier = Modifier.height(48.dp).weight(1f)) {
+                Button(
+                    onClick = {
+                        player.advance()
+                        updatePosition()
+                    },
+                    modifier = Modifier.height(48.dp).weight(1f),
+                ) {
                     Text("+%ds".format(ADVANCE_S))
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Row {
-                Button(onClick = {
+            Button(
+                onClick = {
                     if (isPlaying) {
                         player.pause()
                         isPlaying = false
@@ -163,9 +169,10 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
                         player.play()
                         isPlaying = true
                     }
-                }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                    Text(if (isPlaying) "Pause" else "Play")
-                }
+                },
+                modifier = Modifier.fillMaxWidth().height(48.dp),
+            ) {
+                Text(if (isPlaying) "Pause" else "Play")
             }
         }
     }
