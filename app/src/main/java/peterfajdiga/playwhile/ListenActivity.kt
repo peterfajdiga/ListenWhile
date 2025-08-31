@@ -46,7 +46,7 @@ class ListenActivity : ComponentActivity() {
         val audioUri: Uri = intent?.data
             ?: throw IllegalArgumentException("No audio URI provided in intent")
         setContent {
-            PlayWhileTheme {
+            PlayWhileTheme(densityScale = 2f) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AudioPlayerScreen(audioUri, Modifier.padding(innerPadding))
                 }
