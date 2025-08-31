@@ -1,10 +1,7 @@
 package peterfajdiga.playwhile
 
-import android.media.session.MediaSession
-import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,17 +9,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import peterfajdiga.playwhile.ui.theme.PlayWhileTheme
 
 class ListenActivity : ComponentActivity() {
@@ -46,14 +50,42 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val player = remember { Player(context, audioUri) }
 
+    var position by remember { mutableStateOf(0f) }
+    var duration by remember { mutableStateOf(1f) }
+    var isSeeking by remember { mutableStateOf(false) }
+
     DisposableEffect(Unit) {
         onDispose {
             player.release()
         }
     }
 
+    LaunchedEffect(Unit) {
+        while (true) {
+            if (!isSeeking) {
+                position = player.getCurrentPosition().toFloat()
+                duration = player.getDuration().toFloat().coerceAtLeast(1f)
+            }
+            delay(500)
+        }
+    }
+
     Column(modifier = modifier.padding(16.dp)) {
         Text(text = "Audio URI: $audioUri")
+        Spacer(modifier = Modifier.height(16.dp))
+        Slider(
+            value = position.coerceIn(0f, duration),
+            onValueChange = {
+                position = it
+                isSeeking = true
+            },
+            onValueChangeFinished = {
+                player.seekTo(position.toInt())
+                isSeeking = false
+            },
+            valueRange = 0f..duration,
+            modifier = Modifier.fillMaxWidth()
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             Button(onClick = {

@@ -31,6 +31,18 @@ class Player(
         )
     }
 
+    fun getCurrentPosition(): Int {
+        return mediaPlayer.currentPosition
+    }
+
+    fun getDuration(): Int {
+        return mediaPlayer.duration
+    }
+
+    fun seekTo(positionMs: Int) {
+        mediaPlayer.seekTo(positionMs)
+    }
+
     fun release() {
         mediaPlayer.release()
     }
