@@ -47,10 +47,10 @@ fun AudioPickerScreen(modifier: Modifier = Modifier) {
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { uri -> selectedAudioUri = uri }
     )
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(16.dp)) {
         Button(onClick = {
             launcher.launch(arrayOf("audio/*"))
-        }) {
+        }, modifier = Modifier.fillMaxWidth().height(48.dp)) {
             Text("Pick Audio File")
         }
     }
