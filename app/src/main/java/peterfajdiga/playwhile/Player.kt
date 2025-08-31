@@ -6,12 +6,16 @@ import android.media.session.MediaSession
 import android.media.session.PlaybackState
 import android.net.Uri
 
-const val REWIND_AMOUNT_MS = 10000
-
 class Player(
     context: Context,
     audioUri: Uri,
+    val config: Config,
 ) {
+    data class Config(
+        val rewindMs: Int,
+        val advanceMs: Int,
+    )
+
     private val mediaPlayer = MediaPlayer.create(context, audioUri)
     private val mediaSession = MediaSession(context, "PlayWhilePlayerMediaSession")
 
@@ -25,10 +29,22 @@ class Player(
         updatePlaybackState(PlaybackState.STATE_PAUSED)
     }
 
-    fun rewind() {
+    fun seekTo(positionMs: Int) {
         mediaPlayer.seekTo(
-            (mediaPlayer.currentPosition - REWIND_AMOUNT_MS).coerceAtLeast(0),
+            positionMs.coerceIn(0, mediaPlayer.duration),
         )
+    }
+
+    fun seekBy(deltaMs: Int) {
+        mediaPlayer.seekTo(mediaPlayer.currentPosition + deltaMs)
+    }
+
+    fun rewind() {
+        seekBy(-config.rewindMs)
+    }
+
+    fun advance() {
+        seekBy(config.advanceMs)
     }
 
     fun isPlaying(): Boolean {
@@ -41,10 +57,6 @@ class Player(
 
     fun getDuration(): Int {
         return mediaPlayer.duration
-    }
-
-    fun seekTo(positionMs: Int) {
-        mediaPlayer.seekTo(positionMs)
     }
 
     fun release() {
@@ -79,6 +91,10 @@ class Player(
 
             override fun onSkipToPrevious() {
                 rewind()
+            }
+
+            override fun onSkipToNext() {
+                advance()
             }
         })
         mediaSession.isActive

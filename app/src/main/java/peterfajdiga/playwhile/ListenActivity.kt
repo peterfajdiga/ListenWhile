@@ -39,6 +39,9 @@ import kotlinx.coroutines.delay
 import peterfajdiga.playwhile.ui.theme.PlayWhileTheme
 import kotlin.time.Duration.Companion.milliseconds
 
+const val REWIND_S = 10
+const val ADVANCE_S = 4
+
 class ListenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +63,11 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val playerViewModel: PlayerViewModel = viewModel(
         factory = viewModelFactory {
-            initializer { PlayerViewModel(context.applicationContext as Application, audioUri) }
+            initializer { PlayerViewModel(
+                context.applicationContext as Application,
+                audioUri,
+                Player.Config(REWIND_S * 1000, ADVANCE_S * 1000),
+            ) }
         }
     )
     val player = playerViewModel.player
@@ -70,13 +77,17 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     var seekbarPosition by remember { mutableFloatStateOf(0f) }
     var isSeeking by remember { mutableStateOf(false) }
 
+    val updatePosition: () -> Unit = {
+        position = player.getCurrentPosition()
+        if (!isSeeking) {
+            seekbarPosition = position.toFloat()
+        }
+    }
+
     LaunchedEffect(Unit) {
         while (true) {
             isPlaying = player.isPlaying()
-            position = player.getCurrentPosition()
-            if (!isSeeking) {
-                seekbarPosition = position.toFloat()
-            }
+            updatePosition()
             delay(500)
         }
     }
@@ -93,7 +104,9 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
         }
     }
 
-    Box(modifier = modifier.padding(16.dp).fillMaxSize()) {
+    Box(modifier = modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
         Column(modifier = Modifier.align(Alignment.Center)) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier.weight(1f)) {
@@ -124,6 +137,22 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
                 valueRange = 0f..duration.toFloat(),
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Button(onClick = {
+                    player.rewind()
+                    updatePosition()
+                }, modifier = Modifier.height(48.dp).weight(1f)) {
+                    Text("-%ds".format(REWIND_S))
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(onClick = {
+                    player.advance()
+                    updatePosition()
+                }, modifier = Modifier.height(48.dp).weight(1f)) {
+                    Text("+%ds".format(ADVANCE_S))
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Row {
                 Button(onClick = {
