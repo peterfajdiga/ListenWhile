@@ -60,6 +60,15 @@ class ListenActivity : ComponentActivity() {
 
 @Composable
 fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
+    Box(modifier = modifier
+        .padding(16.dp)
+        .fillMaxSize()) {
+        AudioPlayerControls(audioUri, modifier = Modifier.align(Alignment.Center))
+    }
+}
+
+@Composable
+fun AudioPlayerControls(audioUri: Uri, modifier: Modifier = Modifier) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val playerViewModel: PlayerViewModel = viewModel(
         factory = viewModelFactory {
@@ -104,76 +113,72 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
         }
     }
 
-    Box(modifier = modifier
-        .padding(16.dp)
-        .fillMaxSize()) {
-        Column(modifier = Modifier.align(Alignment.Center)) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Row(modifier = Modifier.weight(1f)) {
-                    val opacityModifier = if (isSeeking) Modifier.alpha(0.25f) else Modifier
-                    Text(text = formatPosition(position), modifier = opacityModifier)
-                    if (isSeeking) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "->", opacityModifier)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = formatPosition(seekbarPosition.toInt()))
-                    }
+    Column(modifier = modifier) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier.weight(1f)) {
+                val opacityModifier = if (isSeeking) Modifier.alpha(0.25f) else Modifier
+                Text(text = formatPosition(position), modifier = opacityModifier)
+                if (isSeeking) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "->", opacityModifier)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = formatPosition(seekbarPosition.toInt()))
                 }
-                Text(
-                    text = formatPosition(duration),
-                    textAlign = TextAlign.End,
-                )
             }
-            Slider(
-                value = seekbarPosition.coerceIn(0f, duration.toFloat()),
-                onValueChange = {
-                    seekbarPosition = it
-                    isSeeking = true
-                },
-                onValueChangeFinished = {
-                    player.seekTo(seekbarPosition.toInt())
-                    isSeeking = false
-                },
-                valueRange = 0f..duration.toFloat(),
-                modifier = Modifier.fillMaxWidth(),
+            Text(
+                text = formatPosition(duration),
+                textAlign = TextAlign.End,
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Button(
-                    onClick = {
-                        player.rewind()
-                        updatePosition()
-                    },
-                    modifier = Modifier.height(48.dp).weight(1f),
-                ) {
-                    Text("-%ds".format(REWIND_S))
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    onClick = {
-                        player.advance()
-                        updatePosition()
-                    },
-                    modifier = Modifier.height(48.dp).weight(1f),
-                ) {
-                    Text("+%ds".format(ADVANCE_S))
-                }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
+        }
+        Slider(
+            value = seekbarPosition.coerceIn(0f, duration.toFloat()),
+            onValueChange = {
+                seekbarPosition = it
+                isSeeking = true
+            },
+            onValueChangeFinished = {
+                player.seekTo(seekbarPosition.toInt())
+                isSeeking = false
+            },
+            valueRange = 0f..duration.toFloat(),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(modifier = Modifier.fillMaxWidth()) {
             Button(
                 onClick = {
-                    if (isPlaying) {
-                        player.pause()
-                        isPlaying = false
-                    } else {
-                        player.play()
-                        isPlaying = true
-                    }
+                    player.rewind()
+                    updatePosition()
                 },
-                modifier = Modifier.fillMaxWidth().height(48.dp),
+                modifier = Modifier.height(48.dp).weight(1f),
             ) {
-                Text(if (isPlaying) "Pause" else "Play")
+                Text("-%ds".format(REWIND_S))
             }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    player.advance()
+                    updatePosition()
+                },
+                modifier = Modifier.height(48.dp).weight(1f),
+            ) {
+                Text("+%ds".format(ADVANCE_S))
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                if (isPlaying) {
+                    player.pause()
+                    isPlaying = false
+                } else {
+                    player.play()
+                    isPlaying = true
+                }
+            },
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+        ) {
+            Text(if (isPlaying) "Pause" else "Play")
         }
     }
 }
