@@ -8,10 +8,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -40,7 +37,6 @@ fun PlayWhileTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    densityScale: Float = 1f,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -56,12 +52,6 @@ fun PlayWhileTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-    ) {
-        CompositionLocalProvider(
-            LocalDensity provides Density(
-                density = LocalDensity.current.density * densityScale,
-            ),
-            content = content,
-        )
-    }
+        content = content
+    )
 }
