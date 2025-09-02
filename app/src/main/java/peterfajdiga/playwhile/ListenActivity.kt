@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
@@ -63,14 +65,24 @@ class ListenActivity : ComponentActivity() {
 
 @Composable
 fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
-    CompositionLocalProvider(
-        LocalDensity provides Density(
-            density = LocalDensity.current.density * 2.0f,
-        )
-    ) {
-        Box(modifier = modifier
+    var densityMultiplier by remember { mutableFloatStateOf(1f) }
+    val pinchModifier = Modifier.pointerInput(Unit) {
+        detectTransformGestures { _, _, zoom, _ ->
+            densityMultiplier = (densityMultiplier * zoom).coerceIn(1f, 2f)
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .then(pinchModifier)
             .padding(16.dp)
-            .fillMaxSize()) {
+            .fillMaxSize()
+    ) {
+        CompositionLocalProvider(
+            LocalDensity provides Density(
+                density = LocalDensity.current.density * densityMultiplier,
+            )
+        ) {
             AudioPlayerControls(audioUri, modifier = Modifier.align(Alignment.Center))
         }
     }
