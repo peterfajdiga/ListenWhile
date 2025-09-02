@@ -68,7 +68,7 @@ fun AudioPlayerScreen(audioUri: Uri, modifier: Modifier = Modifier) {
     var densityMultiplier by remember { mutableFloatStateOf(1f) }
     val pinchModifier = Modifier.pointerInput(Unit) {
         detectTransformGestures { _, _, zoom, _ ->
-            densityMultiplier = (densityMultiplier * zoom).coerceIn(1f, 2f)
+            densityMultiplier = (densityMultiplier * zoom).coerceIn(1f, 3f)
         }
     }
 
