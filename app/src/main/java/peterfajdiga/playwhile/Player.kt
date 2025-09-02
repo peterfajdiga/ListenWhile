@@ -72,7 +72,10 @@ class Player(
             .setActions(
                 PlaybackState.ACTION_PLAY or
                 PlaybackState.ACTION_PAUSE or
-                PlaybackState.ACTION_SKIP_TO_PREVIOUS
+                PlaybackState.ACTION_SKIP_TO_PREVIOUS or
+                PlaybackState.ACTION_SKIP_TO_NEXT or
+                PlaybackState.ACTION_REWIND or
+                PlaybackState.ACTION_FAST_FORWARD
             )
             .setState(state, mediaPlayer.currentPosition.toLong(), 1.0f)
             .build()
@@ -94,6 +97,14 @@ class Player(
             }
 
             override fun onSkipToNext() {
+                advance()
+            }
+
+            override fun onRewind() {
+                rewind()
+            }
+
+            override fun onFastForward() {
                 advance()
             }
         })
