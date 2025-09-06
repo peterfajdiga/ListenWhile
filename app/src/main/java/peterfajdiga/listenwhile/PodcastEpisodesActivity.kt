@@ -14,6 +14,8 @@ import org.xmlpull.v1.XmlPullParserFactory
 import java.net.URL
 import java.net.HttpURLConnection
 
+data class Episode(val title: String, val audioUrl: String?)
+
 class PodcastEpisodesActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,9 +32,10 @@ class PodcastEpisodesActivity : ComponentActivity() {
 
 @Composable
 fun PodcastEpisodesScreen(rssUrl: String, modifier: Modifier = Modifier) {
-    var episodes by remember { mutableStateOf<List<String>>(emptyList()) }
+    var episodes by remember { mutableStateOf<List<Episode>>(emptyList()) }
     var error by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(true) }
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     LaunchedEffect(rssUrl) {
         withContext(Dispatchers.IO) {
@@ -47,22 +50,29 @@ fun PodcastEpisodesScreen(rssUrl: String, modifier: Modifier = Modifier) {
                 val factory = XmlPullParserFactory.newInstance()
                 val parser = factory.newPullParser()
                 parser.setInput(inputStream, null)
-                val items = mutableListOf<String>()
+                val items = mutableListOf<Episode>()
                 var eventType = parser.eventType
                 var insideItem = false
                 var title: String? = null
+                var audioUrl: String? = null
                 while (eventType != XmlPullParser.END_DOCUMENT) {
                     val tagName = parser.name
                     when (eventType) {
                         XmlPullParser.START_TAG -> {
                             if (tagName == "item") insideItem = true
                             if (insideItem && tagName == "title") title = parser.nextText()
+                            if (insideItem && tagName == "enclosure") {
+                                audioUrl = parser.getAttributeValue(null, "url")
+                            }
                         }
                         XmlPullParser.END_TAG -> {
                             if (tagName == "item") {
                                 insideItem = false
-                                title?.let { items.add(it) }
+                                if (title != null) {
+                                    items.add(Episode(title!!, audioUrl))
+                                }
                                 title = null
+                                audioUrl = null
                             }
                         }
                     }
@@ -84,8 +94,20 @@ fun PodcastEpisodesScreen(rssUrl: String, modifier: Modifier = Modifier) {
             loading -> Text("Loading...")
             error != null -> Text(error!!, color = MaterialTheme.colorScheme.error)
             episodes.isEmpty() -> Text("No episodes found.")
-            else -> episodes.forEach { title ->
-                Text(title, modifier = Modifier.padding(vertical = 4.dp))
+            else -> episodes.forEach { episode ->
+                episode.audioUrl?.let { audioUrl ->
+                    Button(
+                        onClick = {
+                            val intent = android.content.Intent(context, ListenActivity::class.java).apply {
+                                data = android.net.Uri.parse(audioUrl)
+                            }
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    ) {
+                        Text(episode.title)
+                    }
+                } ?: Text(episode.title, modifier = Modifier.padding(vertical = 4.dp))
             }
         }
     }
