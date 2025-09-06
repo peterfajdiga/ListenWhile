@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -94,20 +96,22 @@ fun PodcastEpisodesScreen(rssUrl: String, modifier: Modifier = Modifier) {
             loading -> Text("Loading...")
             error != null -> Text(error!!, color = MaterialTheme.colorScheme.error)
             episodes.isEmpty() -> Text("No episodes found.")
-            else -> episodes.forEach { episode ->
-                episode.audioUrl?.let { audioUrl ->
-                    Button(
-                        onClick = {
-                            val intent = android.content.Intent(context, ListenActivity::class.java).apply {
-                                data = android.net.Uri.parse(audioUrl)
-                            }
-                            context.startActivity(intent)
-                        },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                    ) {
-                        Text(episode.title)
-                    }
-                } ?: Text(episode.title, modifier = Modifier.padding(vertical = 4.dp))
+            else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(episodes) { episode ->
+                    episode.audioUrl?.let { audioUrl ->
+                        Button(
+                            onClick = {
+                                val intent = android.content.Intent(context, ListenActivity::class.java).apply {
+                                    data = android.net.Uri.parse(audioUrl)
+                                }
+                                context.startActivity(intent)
+                            },
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                        ) {
+                            Text(episode.title)
+                        }
+                    } ?: Text(episode.title, modifier = Modifier.padding(vertical = 4.dp))
+                }
             }
         }
     }
