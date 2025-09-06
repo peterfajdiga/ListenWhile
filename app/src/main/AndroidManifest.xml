@@ -13,9 +13,15 @@
         android:theme="@style/Theme.ListenWhile">
         <activity
             android:name=".ListenActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_listen"
-            android:theme="@style/Theme.ListenWhile" />
+            android:theme="@style/Theme.ListenWhile">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".PickerActivity"
             android:exported="true"
