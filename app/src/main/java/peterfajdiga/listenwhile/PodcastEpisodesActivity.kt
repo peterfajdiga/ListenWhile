@@ -3,6 +3,7 @@ package peterfajdiga.listenwhile
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -99,18 +100,21 @@ fun PodcastEpisodesScreen(rssUrl: String, modifier: Modifier = Modifier) {
             else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(episodes) { episode ->
                     episode.audioUrl?.let { audioUrl ->
-                        Button(
-                            onClick = {
-                                val intent = android.content.Intent(context, ListenActivity::class.java).apply {
-                                    data = android.net.Uri.parse(audioUrl)
+                        ListItem(
+                            headlineContent = { Text(episode.title) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    val intent = android.content.Intent(context, ListenActivity::class.java).apply {
+                                        data = android.net.Uri.parse(audioUrl)
+                                    }
+                                    context.startActivity(intent)
                                 }
-                                context.startActivity(intent)
-                            },
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
-                        ) {
-                            Text(episode.title)
-                        }
-                    } ?: Text(episode.title, modifier = Modifier.padding(vertical = 4.dp))
+                        )
+                    } ?: ListItem(
+                        headlineContent = { Text(episode.title) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }
