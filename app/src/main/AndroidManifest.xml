@@ -10,17 +10,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PlayWhile">
+        android:theme="@style/Theme.ListenWhile">
         <activity
             android:name=".ListenActivity"
             android:exported="false"
             android:label="@string/title_activity_listen"
-            android:theme="@style/Theme.PlayWhile" />
+            android:theme="@style/Theme.ListenWhile" />
         <activity
             android:name=".PickerActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.PlayWhile">
+            android:theme="@style/Theme.ListenWhile">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

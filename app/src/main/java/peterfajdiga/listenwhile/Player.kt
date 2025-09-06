@@ -1,4 +1,4 @@
-package peterfajdiga.playwhile
+package peterfajdiga.listenwhile
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -17,7 +17,7 @@ class Player(
     )
 
     private val mediaPlayer = MediaPlayer.create(context, audioUri)
-    private val mediaSession = MediaSession(context, "PlayWhilePlayerMediaSession")
+    private val mediaSession = MediaSession(context, "ListenWhilePlayerMediaSession")
 
     fun play() {
         mediaPlayer.start()

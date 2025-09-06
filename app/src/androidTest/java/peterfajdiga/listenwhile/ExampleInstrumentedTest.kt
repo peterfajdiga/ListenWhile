@@ -1,4 +1,4 @@
-package peterfajdiga.playwhile
+package peterfajdiga.listenwhile
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("peterfajdiga.playwhile", appContext.packageName)
+        assertEquals("peterfajdiga.listenwhile", appContext.packageName)
     }
 }

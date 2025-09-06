@@ -1,4 +1,4 @@
-package peterfajdiga.playwhile
+package peterfajdiga.listenwhile
 
 import android.app.Application
 import android.net.Uri
@@ -41,7 +41,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.delay
-import peterfajdiga.playwhile.ui.theme.PlayWhileTheme
+import peterfajdiga.listenwhile.ui.theme.ListenWhileTheme
 import kotlin.time.Duration.Companion.milliseconds
 
 const val REWIND_S = 10
@@ -54,7 +54,7 @@ class ListenActivity : ComponentActivity() {
         val audioUri: Uri = intent?.data
             ?: throw IllegalArgumentException("No audio URI provided in intent")
         setContent {
-            PlayWhileTheme {
+            ListenWhileTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AudioPlayerScreen(audioUri, Modifier.padding(innerPadding))
                 }

@@ -1,4 +1,4 @@
-package peterfajdiga.playwhile
+package peterfajdiga.listenwhile
 
 import org.junit.Test
 

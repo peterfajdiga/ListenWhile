@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "peterfajdiga.playwhile"
+    namespace = "peterfajdiga.listenwhile"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "peterfajdiga.playwhile"
+        applicationId = "peterfajdiga.listenwhile"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

@@ -1,4 +1,4 @@
-package peterfajdiga.playwhile.ui.theme
+package peterfajdiga.listenwhile.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

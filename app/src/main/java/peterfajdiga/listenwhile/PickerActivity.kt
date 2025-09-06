@@ -1,4 +1,4 @@
-package peterfajdiga.playwhile
+package peterfajdiga.listenwhile
 
 import android.content.Intent
 import android.net.Uri
@@ -17,14 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import peterfajdiga.playwhile.ui.theme.PlayWhileTheme
+import peterfajdiga.listenwhile.ui.theme.ListenWhileTheme
 
 class PickerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PlayWhileTheme {
+            ListenWhileTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     AudioPickerScreen(modifier = Modifier.padding(innerPadding))
                 }
@@ -65,7 +65,7 @@ fun AudioPickerScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    PlayWhileTheme {
+    ListenWhileTheme {
         AudioPickerScreen()
     }
 }
