@@ -1,6 +1,9 @@
 package peterfajdiga.listenwhile
 
 import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
@@ -18,8 +21,11 @@ class Player(
 
     private val mediaPlayer = MediaPlayer.create(context, audioUri)
     private val mediaSession = MediaSession(context, "ListenWhilePlayerMediaSession")
+    private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private var hasFocus = false
 
     fun play() {
+        requestAudioFocus()
         mediaPlayer.start()
         updatePlaybackState(PlaybackState.STATE_PLAYING)
     }
@@ -110,5 +116,32 @@ class Player(
         })
         mediaSession.isActive
         updatePlaybackState(PlaybackState.STATE_NONE)
+    }
+
+    private fun requestAudioFocus() {
+        if (hasFocus) {
+            return
+        }
+
+        val focusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+            .setAudioAttributes(AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build()
+            )
+            .setOnAudioFocusChangeListener { focusChange ->
+                when (focusChange) {
+                    AudioManager.AUDIOFOCUS_LOSS,
+                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+                    AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                        hasFocus = false
+                        pause()
+                    }
+                }
+            }
+            .build()
+        if (audioManager.requestAudioFocus(focusRequest) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            hasFocus = true
+        }
     }
 }
