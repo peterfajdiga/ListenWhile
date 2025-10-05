@@ -118,6 +118,7 @@ fun AudioPlayerControls(audioUri: Uri, modifier: Modifier = Modifier) {
         while (true) {
             isPlaying = player.isPlaying()
             updatePosition()
+            playerViewModel.saveCurrentPosition()
             delay(500)
         }
     }
